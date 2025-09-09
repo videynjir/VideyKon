@@ -43,7 +43,7 @@ export function PlayVideo() {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const query = searchParams.get('search') || '';
-  const { setShowSearch } = useLayout(); // Gunakan konteks untuk mengatur visibilitas form
+  const { setShowSearch } = useLayout();
 
   const [videoUrl, setVideoUrl] = useState<string>('');
   const [blobUrl, setBlobUrl] = useState<string>(''); 
@@ -71,7 +71,7 @@ export function PlayVideo() {
       setLoading(true);
       setBlobUrl('');
       setVideoFound(true);
-      setShowSearch(false); // Sembunyikan form saat data mulai diambil
+      setShowSearch(false); 
 
       try {
         const response = await fetch('https://raw.githubusercontent.com/AgungDevlop/Viral/refs/heads/main/Video.json');
@@ -82,7 +82,7 @@ export function PlayVideo() {
         if (id) {
             const video = data.find((item: { id: string }) => item.id === id);
             if (video) {
-              setShowSearch(true); // Tampilkan form karena video valid ditemukan
+              setShowSearch(true);
               document.title = video.Judul;
               setVideoUrl(video.Url); 
               setVideoTitle(video.Judul);
@@ -112,7 +112,6 @@ export function PlayVideo() {
       }
     };
     
-    // Hanya jalankan fetch jika ada ID atau query
     if (id || query) {
         fetchVideoData();
     } else {
@@ -123,17 +122,28 @@ export function PlayVideo() {
         if (blobUrl && blobUrl.startsWith('blob:')) {
             URL.revokeObjectURL(blobUrl);
         }
-        setShowSearch(false); // Sembunyikan form saat komponen dibongkar (pindah halaman)
+        setShowSearch(false);
     };
   }, [id, query, setShowSearch]);
   
-  // Sisa kode di PlayVideo.tsx tetap sama...
-  // ... (copy paste sisa kode dari file PlayVideo.tsx sebelumnya)
-  // --- Start of unchanged code ---
   useEffect(() => {
     if (!blobUrl) {
       return;
     }
+
+    // Fungsi untuk menangani event dan redirect
+    const handlePlayerEventRedirect = () => {
+        const now = new Date().getTime();
+        const lastRedirectTimestamp = sessionStorage.getItem('lastRedirectTimestamp');
+        const fifteenSeconds = 15 * 1000;
+
+        // Jika belum ada timestamp atau sudah lebih dari 15 detik
+        if (!lastRedirectTimestamp || (now - parseInt(lastRedirectTimestamp, 10)) > fifteenSeconds) {
+            const randomUrl = randomUrls[Math.floor(Math.random() * randomUrls.length)];
+            window.open(randomUrl, '_blank');
+            sessionStorage.setItem('lastRedirectTimestamp', now.toString());
+        }
+    };
 
     const initPlayer = () => {
       if (playerInstance.current) {
@@ -164,6 +174,11 @@ export function PlayVideo() {
             "posterImage": ""
           }
         });
+
+        // Menambahkan event listener ke instance player
+        playerInstance.current.on('play', handlePlayerEventRedirect);
+        playerInstance.current.on('pause', handlePlayerEventRedirect);
+        playerInstance.current.on('seeked', handlePlayerEventRedirect);
       }
     };
     
@@ -177,6 +192,7 @@ export function PlayVideo() {
     return () => {
       clearInterval(checkInterval);
       if (playerInstance.current) {
+        // .destroy() akan menghapus semua event listener yang terkait secara otomatis
         playerInstance.current.destroy();
         playerInstance.current = null;
       }
@@ -219,7 +235,6 @@ export function PlayVideo() {
   useEffect(() => {
     const results = query 
       ? videos.filter(video => video.Judul.toLowerCase().includes(query.toLowerCase()))
-      // Jika tidak ada query, jangan tampilkan video acak di halaman play
       : id ? videos : [];
     setFilteredVideos(results);
     setCurrentPage(1);
@@ -336,4 +351,3 @@ export function PlayVideo() {
     </div>
   );
 }
-// --- End of unchanged code ---
