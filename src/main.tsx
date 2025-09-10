@@ -25,18 +25,50 @@ const router = createBrowserRouter([
         path: "search",
         element: <PlayVideo /> 
       },
-      // Rute-rute ini tetap untuk memutar video berdasarkan ID
-      { path: ":id", element: <PlayVideo /> },
-      { path: "e/:id", element: <PlayVideo /> },
-      { path: "f/:id", element: <PlayVideo /> },
-      { path: "d/:id", element: <PlayVideo /> },
-      { path: "v/:id", element: <PlayVideo /> },
-      { path: "play/:id", element: <PlayVideo /> },
-      { path: "view/:id", element: <PlayVideo /> },
-      { path: "share/:id", element: <PlayVideo /> },
-      { path: "download", element: <Download /> },
-      { path: "contact", element: <Contact /> },
-      { path: "s/:id", element: <Redirect /> },
+      {
+        path: ":id", // Rute dinamis berdasarkan ID
+        element: <PlayVideo />,
+      },
+      {
+        path: "e/:id", // Rute baru untuk format `/e/:id`
+        element: <PlayVideo />,
+      },
+      {
+        path: "d/:id", // Rute baru untuk format `/e/:id`
+        element: <PlayVideo />,
+      },
+      {
+        path: "v/:id", // Rute baru untuk format `/e/:id`
+        element: <PlayVideo />,
+      },
+      {
+        path: "f/:id", // Rute baru untuk format `/e/:id`
+        element: <PlayVideo />,
+      },
+      {
+        path: "play/:id", // Rute baru untuk format `/e/:id`
+        element: <PlayVideo />,
+      },
+      {
+        path: "view/:id", // Rute baru untuk format `/e/:id`
+        element: <PlayVideo />,
+      },
+      {
+        path: "share/:id", // Rute baru untuk format `/e/:id`
+        element: <PlayVideo />,
+      },
+      {
+        path: "download", // Rute untuk halaman Download
+        element: <Download />,
+      },
+      {
+        path: "contact", // Rute untuk halaman Contact
+        element: <Contact />,
+      },
+      {
+        path: "s/:id",
+        element: <Redirect />,
+      },
     ],
   },
 ]);
